@@ -11,7 +11,7 @@ public class Djikstra {
 	static	PriorityQueue<V> queue = new PriorityQueue<V>();	
 	public static void main(String[] args) throws Exception{
 					fill();
-					
+					System.out.println(graph.getShortestDistance(2, 3));
 	}
 	private static void fill() throws Exception {
 			graph = new Graph(N);
@@ -23,7 +23,7 @@ public class Djikstra {
 			}
 			scan.close();
 		}
-		private static void fill(int i, int j, int k) {
+	private static void fill(int i, int j, int k) {
 //			System.out.println(i+" "+j+" "+k);
 			graph.addEdge(new E(graph.getVertex(i),graph.getVertex(j),k));
 		}

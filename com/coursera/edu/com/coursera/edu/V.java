@@ -11,6 +11,14 @@ Integer val = Integer.MAX_VALUE;
 public V(){}
 public V(int a){key=a;}
 
+public V clone(){
+	V v = new V();
+	v.key=this.key;
+	v.pred=this.pred;
+	v.val=this.val;
+	return v;
+}
+
 public int getKey() {
 	return key;
 }

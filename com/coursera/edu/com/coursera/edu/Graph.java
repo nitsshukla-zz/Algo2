@@ -9,18 +9,20 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class Graph {
-	final Integer MAX_VALUE=Integer.MAX_VALUE/2;
+	final Integer MAX_VALUE=Integer.MAX_VALUE/100;
 	List<LinkedList<E>> edges = new LinkedList<LinkedList<E>>();
-	List<V> vertices = new LinkedList<V>();
+	List<V> vertices = new ArrayList<V>();
 	Map<String, E> edgeMap = new HashMap<String,E>();
 	Boolean negativeEdge = false;
+	int N=0;
 	public Graph(){}
 	public Graph(int N){
+		this.N=N;
 		for(int i=0;i<N;i++){
 			vertices.add(new V(i));
 			edges.add(new LinkedList<E>());
 		}
-	}
+	}	
 	public void addEdge(E e) {
 		edges.get(e.getU().getKey()).add(e);
 		edgeMap.put(e.u.key+"_"+e.v.key, e);
@@ -52,7 +54,6 @@ public class Graph {
 			}
 		 return false;
 	}
-	
 	public int getShortestDistance(int i, int j) {
 		if(!negativeEdge)
 			this.getShortestDjik(i);
@@ -117,5 +118,46 @@ public class Graph {
 		}
 		}
 		return ans;
+	}
+	public int[][] getWeightMatrix() {
+		int[][] oldM = new int[vertices.size()][vertices.size()];
+		int N=vertices.size();
+		for(int i=0;i<N;i++)
+			for(int i1=0;i1<N;i1++)
+					if(i!=i1)oldM[i][i1]=this.MAX_VALUE;
+					else oldM[i][i1]=0;
+		for(E e:this.edgeMap.values()){
+			oldM[e.getU().getKey()][e.getV().getKey()]=e.getWeight();
+	}
+		return oldM;
+}
+	public int[][] getAllPairShortestDjik() {
+		int[][] pathMatrix = new int[N][N];
+		for(int i=0;i<N;i++){
+			this.getShortestDjik(i);
+			for(int i1=0;i1<N;i1++){
+				pathMatrix[i][i1]=this.getVertex(i1).val;
+			}
+		}
+	return pathMatrix;
+	}
+	public int[][] getAllPaitShortestFloydMarshall() throws NegativeCycleException{
+		int[][] oldM = null;
+		oldM=this.getWeightMatrix();
+		for(int i=0;i<N;i++){
+			int[][] newM = new int[N][N];
+			for(int i1=0;i1<N;i1++){
+				for(int i2=0;i2<N;i2++){
+					newM[i1][i2]=Math.min(oldM[i1][i2], oldM[i1][i]+oldM[i][i2]);
+					if(newM[i1][i2]<oldM[i1][i2])
+							vertices.get(i2).pred=vertices.get(i);
+				}
+			}
+		oldM=newM;
+		}
+	for(int i=0;i<N;i++)
+			if(oldM[i][i]<0)
+					throw new NegativeCycleException();
+		return oldM;
 	}
 }
