@@ -54,14 +54,14 @@ public class Graph {
 			}
 		 return false;
 	}
-	public int getShortestDistance(int i, int j) {
+	public int getShortestDistance(int i, int j) throws NegativeCycleException {
 		if(!negativeEdge)
 			this.getShortestDjik(i);
 		else
 			this.getShortestBellFord(i);
 		return vertices.get(j).val;
 	}
-	public Integer[] getShortestDistancePath(int i, int j) {
+	public Integer[] getShortestDistancePath(int i, int j) throws NegativeCycleException {
 		if(!negativeEdge)
 			this.getShortestDjik(i);
 		else
@@ -86,7 +86,7 @@ public class Graph {
 	}
 	s.val=0;
 	}
-	public List<V> getShortestBellFord(int s1) {
+	public List<V> getShortestBellFord(int s1) throws NegativeCycleException {
 		V s = vertices.get(s1);
 		initializeSingleSource(s);
 		for(int i=0;i<vertices.size()-1;i++){
@@ -94,6 +94,15 @@ public class Graph {
 				this.relax(e.u, e.v);
 			}
 		}
+		List<V> h = new LinkedList<V>();
+		for(V v:vertices)
+				h.add(v.clone());
+		
+		for(E e:edgeMap.values())
+			this.relax(e.u, e.v);
+		for(int i=0;i<vertices.size();i++)
+			if(vertices.get(i).val!=h.get(i).val)
+					throw new NegativeCycleException();
 		return vertices;
 	}
 	public List<V> getShortestDjik(int i) {
@@ -160,4 +169,33 @@ public class Graph {
 					throw new NegativeCycleException();
 		return oldM;
 	}
+public int[][] getAllPairShortestJohnson() throws NegativeCycleException{
+	this.getShortestBellFord(N-1);
+
+	this.vertices.remove(this.N-1);
+	this.N-=1;
+	this.edges.remove(this.N);
+	List<String> list = new LinkedList<String>();
+	for(String e:this.edgeMap.keySet())
+		if(this.edgeMap.get(e).u.key==N)
+					list.add(e);
+	
+	for(String e:list)
+		this.edgeMap.remove(e);
+	
+	for(E e:this.edgeMap.values())
+			e.weight+=e.u.val-e.v.val;
+
+	List<V> h = new LinkedList<V>();
+	
+	for(V v:this.vertices)
+		h.add(v.clone());
+	int[][] arr =this.getAllPairShortestDjik();
+	for(int i=0;i<this.N;i++)
+		for(int i1=0;i1<this.N;i1++)
+			arr[i][i1]-=h.get(i).val-h.get(i1).val;
+
+	return arr;
+	
+}
 }
