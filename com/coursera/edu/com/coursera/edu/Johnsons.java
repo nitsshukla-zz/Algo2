@@ -4,12 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 public class Johnsons {
-
+static int N;
 	static Graph graph = null;
 	public static void main(String[] args) throws IOException {
 		fill();
 		try {
-			graph.getShortestBellFord(6);
+			graph.getShortestBellFord(N);
 
 
 			graph.vertices.remove(graph.N-1);
@@ -18,7 +18,7 @@ public class Johnsons {
 			List<String> list = new LinkedList<String>();
 			for(String e:graph.edgeMap.keySet())
 			{
-				if(graph.edgeMap.get(e).u.key==6)
+				if(graph.edgeMap.get(e).u.key==N-1)
 					list.add(e);
 			}
 			for(String e:list)
@@ -32,13 +32,15 @@ public class Johnsons {
 			List<V> h = new LinkedList<V>();
 			for(V v:graph.vertices)
 				h.add(v.clone());
+			int ans=Integer.MAX_VALUE;
 			int[][] arr =graph.getAllPairShortestDjik();
 			for(int i=0;i<graph.N;i++){
 				for(int i1=0;i1<graph.N;i1++)
 				{
 					//System.out.print((arr[i][i1]<=graph.MAX_VALUE/2?arr[i][i1]:"@")+" ");
 					arr[i][i1]-=h.get(i).val-h.get(i1).val;
-					System.out.print((arr[i][i1]<=graph.MAX_VALUE/2?arr[i][i1]:"@")+" ");
+					if(ans>arr[i][i1])
+							ans=arr[i][i1];
 
 				}
 				System.out.println();
@@ -55,12 +57,15 @@ public class Johnsons {
 	}
 
 	private static void fill() throws IOException {
+		
 		Scanner scan = new Scanner(new File("in.txt"));
-		graph = new Graph(7);
+		N = scan.nextInt();
+		int E=scan.nextInt();
+		graph = new Graph(N+1);
 		while(scan.hasNext()){
 			fill(scan.nextInt()-1,scan.nextInt()-1,scan.nextInt());
 		}
-		for(int i=0;i<6;i++){
+		for(int i=0;i<N;i++){
 			fill(6,i,0);
 		}
 	}

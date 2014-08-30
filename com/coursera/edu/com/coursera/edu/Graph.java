@@ -26,6 +26,10 @@ public class Graph {
 	public void addEdge(E e) {
 		edges.get(e.getU().getKey()).add(e);
 		edgeMap.put(e.u.key+"_"+e.v.key, e);
+		if(e.getU() instanceof V1)
+				((V1)(e.getU())).features++;
+		if(e.getV() instanceof V1)
+			((V1)(e.getV())).features++;
 		if(e.weight<0)
 			negativeEdge=true;
 	}
@@ -197,5 +201,69 @@ public int[][] getAllPairShortestJohnson() throws NegativeCycleException{
 
 	return arr;
 	
+}
+public E getRandomEdge() throws GraphException{
+	for(E e: edgeMap.values())
+			return e;
+throw new GraphException();
+}
+
+protected Graph clone()  {
+	Graph graph = new Graph(N);
+	graph.edges=new LinkedList<>();
+	for(LinkedList<E> es:edges)
+			graph.edges.add(new LinkedList<E>(es));
+	graph.vertices = new LinkedList<V>(vertices);
+	graph.edgeMap = new HashMap<String,E>(edgeMap);
+	graph.negativeEdge=negativeEdge;
+	return graph;
+}
+
+public void removeVertex(int i){
+	
+	for(LinkedList<E> es : edges){
+		List<E> liss = new LinkedList<E>();
+			for(E e: es)
+				{if(e.u.key==i || e.v.key==i)
+						{
+						liss.add(e);
+						removeEdgeFromMap(e);
+						}
+				else if(e.weight<0)
+					negativeEdge=true;
+				}
+			for(E e:liss)
+				{
+				es.remove(e);
+				if(e.getU() instanceof V1)
+						((V1)e.getU()).features--;
+
+				if(e.getV() instanceof V1)
+						((V1)e.getV()).features--;
+				}
+	}
+		for(E e:edges.get(i)){
+			removeEdgeFromMap(e);
+		}
+		edges.get(i).clear();
+		for(E e:edges.get(i)){
+			if(e.getU() instanceof V1)
+				((V1)e.getU()).features--;
+
+		if(e.getV() instanceof V1)
+				((V1)e.getV()).features--;
+		}
+		
+		//vertices.remove(i);
+		//N-=1;
+}
+public void removeEdgeFromMap(E e){
+	///System.out.println(e);
+	List<String> list= new LinkedList<String>();
+	for(String s:edgeMap.keySet())
+		if(edgeMap.get(s).equals(e))
+					list.add(s);
+	for(String s:list)
+							edgeMap.remove(s);
 }
 }

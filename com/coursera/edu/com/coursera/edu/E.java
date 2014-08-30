@@ -38,5 +38,12 @@ public Integer getWeight() {
 public void setWeight(int weight) {
 	this.weight = weight;
 }
+@Override
+public boolean equals(Object arg0) {
+	E e = (E)arg0;
+	if(this.u.getKey()==e.u.getKey() && this.v.getKey()==e.v.getKey() && this.weight==e.weight)
+		return true;
+	return false;
+}
 
 }
