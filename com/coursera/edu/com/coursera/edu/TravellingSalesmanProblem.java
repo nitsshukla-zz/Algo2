@@ -21,38 +21,63 @@ public class TravellingSalesmanProblem {
 					map1.put(0, 0);
 					sets.add(set);
 					}
-				else
-					map1.put(0, Integer.MAX_VALUE);
+				else 
+					map1.put(0, graph.MAX_VALUE);
 				map.put(set, map1);
 				
 				}
-			sets11 = new LinkedList<Set>();
-			for(Set s: sets)
-				sets11.add(s.clone());
 			
-			
+			HashMap<Set, HashMap<Integer, Integer>> map1 = new HashMap<Set, HashMap<Integer,Integer>>();
+			int ii=0;
 															for(int i=0;i<N-1;i++){
-				sets = getSets();
-				for(Set set:sets){
-					HashMap<Integer, Integer> mapS = new HashMap<Integer, Integer>();
-					for(V v:set.vertices){
-						if(v.getKey()==0)
-								continue;
-					Set setI = set.getOne(v);
-					HashMap<Integer, Integer> mapI = map.get(setI);
-					List<V> vI = (graph.getAdjVertices(v));
-					int min = Integer.MAX_VALUE;
-					for(V vv:vI)
-						if(set.vertices.contains(vv) && vv!=v && min>graph.edgeMap.get(vv.key+"_"+v.key).weight)
-							min=mapI.get(vv.getKey())+graph.edgeMap.get(vv.key+"_"+v.key).weight;
-					
-						mapS.put(v.getKey(), min);
-					}
-					map.put(set, mapS);
-					System.out.println(set+"~~~");
-			}
 				
-
+				sets = getSets();
+				System.out.println(i+"  "+sets.size());
+				//System.out.println(sets);
+				for(Set set:sets){
+					if(++ii % 10000==0)
+						System.out.println(ii);
+					HashMap<Integer, Integer> mapS = new HashMap<Integer, Integer>();
+					mapS.clear();
+					for(V v:set.vertices){
+						if(v.key==0)
+								{
+									mapS.put(0, graph.MAX_VALUE);
+									continue;
+								}
+						int min=graph.MAX_VALUE;
+						Set setI = set.getOne(v);
+						HashMap<Integer, Integer> mapI = map.get(setI);
+						for(V v1:setI.vertices){
+							if(graph.edgeMap.containsKey(v1.key+"_"+v.key)){
+								//System.out.println(v1);
+								int temp = graph.edgeMap.get(v1.key+"_"+v.key).weight + mapI.get(v1.getKey());
+								if(temp<min)
+									min = temp;
+							}
+						}
+						mapS.put(v.key, min);
+					}
+					map1.put(set, mapS);
+				//System.out.println(set+"!!!!"+mapS);
+				if(i==N-2)	{
+					HashMap<Integer, Integer> mapI = map1.get(set);
+					int min = graph.MAX_VALUE; 
+					for(V v:set.vertices)
+					{
+						
+						if(v.key!=0 && graph.edgeMap.containsKey(v.key+"_"+"0")){
+							int temp = mapI.get(v.key)+graph.edgeMap.get(v.key+"_"+"0").weight;
+							if(temp<min)
+								min = temp;
+						}
+					}
+					System.out.println(set+"~~~"+min);
+				}
+			}
+			map.clear();
+			map = new HashMap<>(map1);	
+			map1.clear();
 }
 	}
 
@@ -67,6 +92,7 @@ public class TravellingSalesmanProblem {
 					sets1.add(set1);
 					}
 		}
+		sets.clear();
 		return sets1;
 	}
 
@@ -74,9 +100,23 @@ public class TravellingSalesmanProblem {
 		Scanner scan = new Scanner(new File("in.txt"));
 		N = scan.nextInt();
 		graph = new Graph(N);
-		int E = scan.nextInt();
-		for(int i=0;i<E;i++)
-			fill(scan.nextInt()-1,scan.nextInt()-1,scan.nextInt());
+		List<City> cities = new LinkedList<City>();
+		int i=0;
+//		int E = scan.nextInt();
+		while(scan.hasNext())
+			//fill(scan.nextInt()-1,scan.nextInt()-1,scan.nextInt());
+			cities.add(new City(i++,scan.nextDouble(),scan.nextDouble()));
+		for(City c:cities)
+			for(City c1:cities)
+				if(c.key!=c1.key)fill(c.key,c1.key,(int)dist(c,c1));
+	
+			}
+
+	private static long dist(City c, City c1) {
+		Double f = Math.pow(c.x-c1.x,2);
+		Double f1 = Math.pow(c.y-c1.y,2);
+		
+		return Math.round(Math.sqrt(f+f1));
 	}
 
 	private static void fill(int n, int n2, int n3) {
@@ -84,6 +124,14 @@ public class TravellingSalesmanProblem {
 		graph.addEdge(new E(graph.getVertex(n2),graph.getVertex(n),n3));
 	}
 
+}
+
+class City{
+	int key;
+	Double x,y;
+	public City(int key,Double x,Double y){
+		this.x=x;this.y=y;this.key=key;
+	}
 }
 
 class Set{

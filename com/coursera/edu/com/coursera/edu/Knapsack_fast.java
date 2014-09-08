@@ -3,7 +3,6 @@ package com.coursera.edu;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
-import java.util.*;
 
 public class Knapsack_fast {
 		public static void main(String[] args) throws FileNotFoundException{
@@ -18,7 +17,7 @@ public class Knapsack_fast {
 				System.out.println(i);
 				//if(w<=W0)
 					//map.put(w, v);
-					Set<Long> set = new HashSet<>(map.keySet());
+					HashSet<Long> set = new HashSet<>(map.keySet());
 					for(Long s:set ){
 						if(s+w<=W0)
 							{
