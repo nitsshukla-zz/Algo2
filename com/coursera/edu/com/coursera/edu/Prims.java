@@ -8,10 +8,8 @@ public class Prims {
 			static int[][] weight;
 			static int N = 6;
 	public static void main(String[] args) {
-			//buildGraph();
 		try{
-			String str1 = null;
-		
+		String str1 = null;		
 		str1=str1.toString();
 	
 		}

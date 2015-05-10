@@ -266,4 +266,13 @@ public void removeEdgeFromMap(E e){
 	for(String s:list)
 							edgeMap.remove(s);
 }
+public void addDblEdge(E e) {
+	edges.get(e.getU().getKey()).add(e);
+	edges.get(e.getV().getKey()).add(e);
+	edgeMap.put(e.u.key+"_"+e.v.key, e);
+	edgeMap.put(e.v.key+"_"+e.u.key, e);
+	if(e.weight<0)
+		negativeEdge=true;
+
+}
 }

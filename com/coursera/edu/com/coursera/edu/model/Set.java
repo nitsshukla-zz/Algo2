@@ -33,7 +33,7 @@ public class Set{
 	public String toString() {
 		String str="";
 		for(V v:vertices)
-			str+=v.key+" ";
+			str+=v.getKey()+" ";
 		return str;
 	}
 	@Override
@@ -53,7 +53,7 @@ public class Set{
 	public int toString1() {
 		int ans=0;
 		for(V v:vertices)
-			ans +=mul(v.key);
+			ans +=mul(v.getKey());
 		return ans;
 	}
 	
